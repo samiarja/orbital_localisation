@@ -24,7 +24,7 @@ position_x      = []
 position_y      = []
 position_z      = []
 trajectory_data = "ISS_TOPO/ISS.OEM_J2K_EPH.txt"
-image_file = 'ISS_TOPO/blue_marble.jpg'
+image_file = 'img/blue_marble.jpg'
 url = "https://nasa-public-data.s3.amazonaws.com/iss-coords/current/ISS_OEM/ISS.OEM_J2K_EPH.txt"
 
 if not os.path.isdir("ISS_TOPO"):
