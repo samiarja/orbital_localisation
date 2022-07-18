@@ -1,5 +1,5 @@
 
-DATASET = "iridium_1142_davis_td_labelled";
+DATASET = "canopus_streaks_td_cleaned_labelled";
 load("/media/sam/Samsung_T5/PhD/Dataset/EBSSA/Labelled Data/" + DATASET + ".mat")
 % e = struct("x",double(TD.x),"y",double(TD.x),"p",double(events(:,4)),"t",double(events(:,1)));
 TD.ts = TD.ts - TD.ts(1);
@@ -15,8 +15,9 @@ ss = imagesc(S); colorbar; axis image;
 
 idx = 0;
 tau = 1e4;
-displayFreq = 1e3; % in units of time
+displayFreq = 5e3; % in units of time
 nextTimeSample = displayFreq;
+
 for idx = 1:nEvents
     x = e.x(idx)+1;
     y = e.y(idx)+1;
@@ -36,9 +37,9 @@ end
 VelArray = [-2:.01:2];
 nVel = numel(VelArray);
 xStd = nan(1,nVel);
-xSum = nan(1,xs);
+xSum = nan(1,xMax);
 yStd = nan(1,nVel);
-ySum = nan(1,ys);
+ySum = nan(1,yMax);
 
 counter         = 0;
 VelX            = [];
@@ -48,28 +49,28 @@ warped_events_y = [];
 oldMat          = [];
 timeWindow      = 20e6; % 1e6;
 stride          = timeWindow/2;
-stride_array    = 1:stride:e.t(end);
+stride_array    = 1:stride:e.ts(end);
 k = 9e-7;
 
 for ttd = stride_array-1
     counter = counter + 1;
     counter
-    ii = find(e.t> stride_array(counter) & e.t<(timeWindow+stride_array(counter))); % with stride
+    ii = find(e.ts> stride_array(counter) & e.ts<(timeWindow+stride_array(counter))); % with stride
 %     ii = find(e.t>stride_array(counter) & e.t<(stride_array(counter)+stride)); % without stride
 %     ii = 1:numel(e.t); % all events
     if ~isempty(ii)
         for iVelx = 1:nVel
             vx = VelArray(iVelx);
-            for x = 1:xs
-                xSum(x) = sum(round(e.x(ii)+vx*e.t(ii)/1e6) == x);
+            for x = 1:xMax
+                xSum(x) = sum(round(e.x(ii)+vx*e.ts(ii)/1e6) == x);
             end
             xStd(iVelx) = std(xSum);
         end
         
         for iVely = 1:nVel
             vy = VelArray(iVely);
-            for y = 1:ys
-                ySum(y) = sum(round(e.y(ii)+vy*e.t(ii)/1e6) == y);
+            for y = 1:yMax
+                ySum(y) = sum(round(e.y(ii)+vy*e.ts(ii)/1e6) == y);
             end
             yStd(iVely) = std(ySum);
         end
@@ -83,15 +84,15 @@ for ttd = stride_array-1
         VelY = [VelY;velocity_y];
         
         if counter == 1
-            warped_events_x = [warped_events_x;round(e.x(ii)+velocity_x*e.t(ii)/1e6)];
-            warped_events_y = [warped_events_y;round(e.y(ii)+velocity_y*e.t(ii)/1e6)];
+            warped_events_x = [warped_events_x;round(e.x(ii)+velocity_x*e.ts(ii)/1e6)];
+            warped_events_y = [warped_events_y;round(e.y(ii)+velocity_y*e.ts(ii)/1e6)];
         else
             oldMat = find(e.t> stride_array(counter-1) & e.t<(timeWindow+stride_array(counter-1)));
             [overlapVal,overlapIdx] = intersect(ii,oldMat);
 %             newMatrixTest = ii;
             ii(overlapIdx) = [];
-            warped_events_x = [warped_events_x;round(e.x(ii)+velocity_x*e.t(ii)/1e6)];
-            warped_events_y = [warped_events_y;round(e.y(ii)+velocity_y*e.t(ii)/1e6)];
+            warped_events_x = [warped_events_x;round(e.x(ii)+velocity_x*e.ts(ii)/1e6)];
+            warped_events_y = [warped_events_y;round(e.y(ii)+velocity_y*e.ts(ii)/1e6)];
         end
     end
 end

@@ -1,7 +1,7 @@
 %% Generate dataset (Fake star moving across the sky)
-SPEED = 0;
+SPEED = 1;
 ys = 100;
-xs = 200;
+xs = 300;
 diameter = 3;
 nTime = 4e6; % 4 sec
 nBackEvent = 2000;
@@ -59,7 +59,7 @@ plot(-[Vy_init Vy_final],'-');grid on;legend("Vx","Vy");
 % figure(2); clf;
 % S = zeros(xs,ys); T = S; P = T;%-inf;
 % ss = imagesc(S); colorbar; axis image;
-% 
+
 % tau = 25e3;
 % displayFreq = 3e3; % in units of time
 % nextTimeSample = displayFreq;
@@ -92,7 +92,7 @@ warped_events_x = [];
 warped_events_y = [];
 oldMat          = [];
 timeWindow      = 100000; % 1e6;
-stride          = timeWindow/100;
+stride          = timeWindow/50;
 stride_array    = 1:stride:e.t(end);
 
 for ttd = stride_array-1
@@ -107,6 +107,13 @@ for ttd = stride_array-1
                 xSum(x) = sum(round(e.x(ii)+vx*e.t(ii)/1e5) == x);
             end
             xStd(iVelx) = std(xSum);
+%             figure(15345345)
+%             plot(e.y(ii),round(e.x(ii)+vy*e.t(ii)/1e6) ,'.')
+%             figure(35345345)
+%             plot(xSum,1:xs)
+%             grid on;
+%             axis image
+%             drawnow
         end
         
         for iVely = 1:nVel
@@ -146,7 +153,7 @@ subplot(3,3,[1 4])
 scatter3(e.x,e.y,e.t,'.','MarkerFaceAlpha',.2,'MarkerEdgeAlpha',.2);title("Input Events");
 xlabel("X (px)");ylabel("Y (px)");zlabel("Time (\mu s)")
 subplot(3,3,[2 5])
-scatter3(e.warpedx,e.warpedy,e.t,'.','MarkerFaceAlpha',.2,'MarkerEdgeAlpha',.2);
+scatter3(e.warpedx,e.warpedy,e.t(1:numel(e.warpedy)),'.','MarkerFaceAlpha',.2,'MarkerEdgeAlpha',.2);
 xlabel("X (px)");ylabel("Y (px)");zlabel("Time (\mu s)")
 title("3D Warped Events");
 subplot(3,3,3)

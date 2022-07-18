@@ -5,6 +5,9 @@ e = FilterTD(e, 2);
 e.t = e.ts;
 e.t = e.t - e.t(1);
 
+% figure(67657);
+% scatter3(e.x,e.y,e.t,'.','MarkerFaceAlpha',.5,'MarkerEdgeAlpha',.5);
+
 VelArray = [-2:.01:2];
 nVel = numel(VelArray);
 xStd = nan(1,nVel);
@@ -54,15 +57,15 @@ for ttd = stride_array-1
         VelY = [VelY;velocity_y];
         
         if counter == 1
-            warped_events_x = [warped_events_x;round(e.x(ii)+velocity_x*e.t(ii)/1e6)'];
-            warped_events_y = [warped_events_y;round(e.y(ii)+velocity_y*e.t(ii)/1e6)'];
+            warped_events_x = [warped_events_x round(e.x(ii)+velocity_x*e.t(ii)/1e6)'];
+            warped_events_y = [warped_events_y round(e.y(ii)+velocity_y*e.t(ii)/1e6)'];
         else
             oldMat = find(e.t> stride_array(counter-1) & e.t<(timeWindow+stride_array(counter-1)));
             [overlapVal,overlapIdx] = intersect(ii,oldMat);
 %             newMatrixTest = ii;
             ii(overlapIdx) = [];
-            warped_events_x = [warped_events_x;round(e.x(ii)+velocity_x*e.t(ii)/1e6)'];
-            warped_events_y = [warped_events_y;round(e.y(ii)+velocity_y*e.t(ii)/1e6)'];
+            warped_events_x = [warped_events_x round(e.x(ii)+velocity_x*e.t(ii)/1e6)'];
+            warped_events_y = [warped_events_y round(e.y(ii)+velocity_y*e.t(ii)/1e6)'];
         end
     end
 end
@@ -74,7 +77,7 @@ subplot(3,3,[1 4])
 scatter3(e.x,e.y,e.t,'.','MarkerFaceAlpha',.2,'MarkerEdgeAlpha',.2);title("Input Events");
 xlabel("X (px)");ylabel("Y (px)");zlabel("Time (\mu s)")
 subplot(3,3,[2 5])
-scatter3(e.warpedx,e.warpedy,e.t,'.','MarkerFaceAlpha',.2,'MarkerEdgeAlpha',.2);
+scatter3(e.warpedx,e.warpedy,e.t(1:numel(e.warpedy)),'.','MarkerFaceAlpha',.2,'MarkerEdgeAlpha',.2);
 xlabel("X (px)");ylabel("Y (px)");zlabel("Time (\mu s)")
 title("3D Warped Events");
 subplot(3,3,3)
